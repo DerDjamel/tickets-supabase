@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "./lib/supabase/utils/supabase-cookies-utils";
+import { createSupabaseServerClient } from "@/lib/supabase/utils/supabase-cookies-utils";
 
 export default async function Home() {
   const supabase = await createSupabaseServerClient();

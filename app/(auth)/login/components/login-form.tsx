@@ -1,17 +1,35 @@
 "use client";
+import { createSupabaseBrowserClient } from "@/lib/supabase/utils/supabase-browser-client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
 export function LoginForm({ magicLink }: { magicLink: "yes" | "no" }) {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const supabase = createSupabaseBrowserClient();
+  const router = useRouter();
 
   return (
     <form
+      method="POST"
       onSubmit={function onSubmitLoginForm(event) {
         event.preventDefault();
         if (magicLink === "no") {
           console.log("password login");
+          const email = emailRef.current?.value;
+          const password = passwordRef.current?.value;
+          if (email && password) {
+            supabase.auth.signInWithPassword({ email, password }).then((result) => {
+              if (result.data?.user) {
+                router.push("/tickets");
+              } else {
+                alert(result.error?.message);
+              }
+            });
+          } else {
+            alert("Please enter both email and password");
+          }
         }
         if (magicLink === "yes") {
           console.log("magic link login");

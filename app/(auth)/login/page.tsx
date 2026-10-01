@@ -9,7 +9,7 @@ export default async function Login({
 
   return (
     <div className="mt-7">
-      <LoginForm magicLink={magicLink} />
+      <LoginForm magicLink={magicLink || "no"} />
     </div>
   );
 }

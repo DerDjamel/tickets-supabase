@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseProxyClient } from "./app/lib/supabase/utils/supabase-proxy-client";
+import { getSupabaseProxyClient } from "./lib/supabase/utils/supabase-proxy-client";
 
 export async function proxy(req: NextRequest) {
   const { supabase, supabaseResponse } = getSupabaseProxyClient({ request: req });
   const session = await supabase.auth.getSession();
-
+  console.log({ user: session.data?.session?.user });
   const requestedPath = req.nextUrl.pathname;
   const sessionUser = session.data?.session?.user;
 
