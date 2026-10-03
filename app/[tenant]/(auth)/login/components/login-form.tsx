@@ -1,10 +1,11 @@
 "use client";
 import { createSupabaseBrowserClient } from "@/lib/supabase/utils/supabase-browser-client";
+import { urlPath } from "@/lib/url-helpers";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
-export function LoginForm({ magicLink }: { magicLink: "yes" | "no" }) {
+export function LoginForm({ magicLink, tenant }: { magicLink: "yes" | "no"; tenant: string }) {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const supabase = createSupabaseBrowserClient();
@@ -13,7 +14,11 @@ export function LoginForm({ magicLink }: { magicLink: "yes" | "no" }) {
   return (
     <form
       method="POST"
-      action={magicLink === "no" ? "/api/auth/login" : "/api/auth/magic-link"}
+      action={
+        magicLink === "no"
+          ? urlPath("/api/auth/login", tenant)
+          : urlPath("/api/auth/magic-link", tenant)
+      }
       onSubmit={function onSubmitLoginForm(event) {
         if (magicLink === "no") {
           event.preventDefault();
@@ -22,7 +27,7 @@ export function LoginForm({ magicLink }: { magicLink: "yes" | "no" }) {
           if (email && password) {
             supabase.auth.signInWithPassword({ email, password }).then((result) => {
               if (result.data?.user) {
-                router.push("/tickets");
+                router.push(urlPath("/tickets", tenant));
               } else {
                 alert(result.error?.message);
               }
@@ -54,7 +59,7 @@ export function LoginForm({ magicLink }: { magicLink: "yes" | "no" }) {
           {magicLink === "no" ? (
             <Link
               href={{
-                pathname: "/login",
+                pathname: urlPath("/login", tenant),
                 query: { magicLink: "yes" },
               }}
             >
@@ -63,7 +68,7 @@ export function LoginForm({ magicLink }: { magicLink: "yes" | "no" }) {
           ) : (
             <Link
               href={{
-                pathname: "/login",
+                pathname: urlPath("/login", tenant),
                 query: { magicLink: "no" },
               }}
             >
