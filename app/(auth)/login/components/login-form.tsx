@@ -13,10 +13,10 @@ export function LoginForm({ magicLink }: { magicLink: "yes" | "no" }) {
   return (
     <form
       method="POST"
+      action="/api/auth/login"
       onSubmit={function onSubmitLoginForm(event) {
         event.preventDefault();
         if (magicLink === "no") {
-          console.log("password login");
           const email = emailRef.current?.value;
           const password = passwordRef.current?.value;
           if (email && password) {

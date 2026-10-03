@@ -4,7 +4,6 @@ import { getSupabaseProxyClient } from "./lib/supabase/utils/supabase-proxy-clie
 export async function proxy(req: NextRequest) {
   const { supabase, supabaseResponse } = getSupabaseProxyClient({ request: req });
   const session = await supabase.auth.getSession();
-  console.log({ user: session.data?.session?.user });
   const requestedPath = req.nextUrl.pathname;
   const sessionUser = session.data?.session?.user;
 
@@ -13,6 +12,10 @@ export async function proxy(req: NextRequest) {
   if (requestedPath.startsWith("/tickets")) {
     if (!sessionUser) {
       return NextResponse.redirect(new URL("/", req.url));
+    }
+  } else if (requestedPath.startsWith("/login") || requestedPath.startsWith("/register")) {
+    if (sessionUser) {
+      return NextResponse.redirect(new URL("/tickets", req.url));
     }
   } else if (requestedPath === "/") {
     if (sessionUser) {
