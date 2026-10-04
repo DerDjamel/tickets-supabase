@@ -1,0 +1,1 @@
+select auth.jwt() -> 'app_metadata' -> 'tenants' ? 'packt' as has_permission;

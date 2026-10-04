@@ -1,4 +1,10 @@
-export default function TenantName({ tenantName }: { tenantName: string }) {
+import { createSupabaseServerClient } from "@/lib/supabase/utils/supabase-cookies-utils";
+
+export default async function TenantName({ tenantName = "unknown" }: { tenantName: string }) {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.from("tenants").select("*").eq("id", tenantName).single();
+
+  console.log({ data, error, tenantName });
   return (
     <header style={{ marginBottom: "10px" }}>
       <div
@@ -10,7 +16,7 @@ export default function TenantName({ tenantName }: { tenantName: string }) {
         }}
       >
         Ticket System
-        <strong style={{ marginLeft: "1ex" }}>{tenantName}</strong>
+        <strong style={{ marginLeft: "1ex" }}>{error ? "unknown" : data.name}</strong>
       </div>
     </header>
   );
